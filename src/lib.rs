@@ -1,5 +1,5 @@
-use std::error::Error;
 use std::env;
+use std::error::Error;
 use std::fs;
 
 pub enum Case {
@@ -23,9 +23,12 @@ impl Config {
         let case = match env::var("CASE_INSENSITIVE").is_err() {
             true => Case::Sensitive,
             false => Case::Insensitive,
-            
         };
-        Ok(Self { query, filename, case })
+        Ok(Self {
+            query,
+            filename,
+            case,
+        })
     }
 }
 
@@ -43,7 +46,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let mut results = Vec::new();
-    
+
     for line in contents.lines() {
         if line.contains(query) {
             results.push(line);
@@ -51,14 +54,14 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     }
 
     println!("Number of results: {}", results.len());
-    
+
     results
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let mut results = Vec::new();
     let query = query.to_lowercase();
-    
+
     for line in contents.lines() {
         if line.to_lowercase().contains(&query) {
             results.push(line);
@@ -66,7 +69,7 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a st
     }
 
     println!("Number of results: {}", results.len());
-    
+
     results
 }
 
@@ -92,7 +95,9 @@ Rust:
 safe, fast, productive.
 Pick three.
 Trust me.";
-        assert_eq!(vec!["Rust:", "Trust me."], search_case_insensitive(query, contents));
-        
+        assert_eq!(
+            vec!["Rust:", "Trust me."],
+            search_case_insensitive(query, contents)
+        );
     }
 }
